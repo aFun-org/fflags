@@ -22,7 +22,7 @@ extern "C" {
 #define ff_selfProcessChild(name, is_default_) ff_Child ffu_ ## name ## _child = {.is_default=(is_default_), .self_process=true, .child_name=#name, .define=NULL}
 
 #define ff_child(name) (&(ffu_ ## name ## _child))
-#define ff_childList(name, ...) (ff_Child *ffu_ ## name ## _child_list[] = {__VA_ARGS__, NULL})
+#define ff_childList(name, ...) ff_Child *ffu_ ## name ## _child_list[] = {__VA_ARGS__, NULL}
 
 #define ff_initFFlags(argc, argv, d, slash, f, cl) (ff_makeFFlags((argc), (argv), (d), (slash), (f), (ffu_ ## cl ## _child_list)))
 #define ff_getChild(ff) ff_childType(ff)

@@ -1,5 +1,10 @@
 ﻿#ifndef FFLAGS_FFLAGS_H
 #define FFLAGS_FFLAGS_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -7,17 +12,17 @@
 /* 操作宏 */
 #define ff_defArg(name, is_default) ff_DefineArg ffu_ ## name ## _define[] = {
 #define ff_argRule(short, long, arg_type, mark_) \
-    {.short_opt=short, .long_opt=#long, .type=ff_ ## arg_type ## _argument, .mark=mark_},
+    {.short_opt=short, .long_opt=#long, .type=ff_ ## arg_type ## _argument, .mark=(mark_)},
 #define ff_argRule_(short, long, arg_type, mark_) \
-    {.short_opt=short, .long_opt=long, .type=ff_ ## arg_type ## _argument, .mark=mark_},
+    {.short_opt=short, .long_opt=long, .type=ff_ ## arg_type ## _argument, .mark=(mark_)},
 #define ff_endArg(name, is_default_) \
     {.mark=0},};                    \
-    ff_Child ffu_ ## name ## _child = {.is_default=(is_default_), .child_name=#name, .self_process=false, .define=ffu_ ## name ## _define}
+    ff_Child ffu_ ## name ## _child = {.is_default=(is_default_), .self_process=false, .child_name=#name, .define=ffu_ ## name ## _define}
 
-#define ff_selfProcessChild(name, is_default_) ff_Child ffu_ ## name ## _child = {.is_default=(is_default_), .child_name=#name, .self_process=true, .define=NULL}
+#define ff_selfProcessChild(name, is_default_) ff_Child ffu_ ## name ## _child = {.is_default=(is_default_), .self_process=true, .child_name=#name, .define=NULL}
 
 #define ff_child(name) (&(ffu_ ## name ## _child))
-#define ff_childList(name, ...) ff_Child *ffu_ ## name ## _child_list[] = {__VA_ARGS__, NULL}
+#define ff_childList(name, ...) (ff_Child *ffu_ ## name ## _child_list[] = {__VA_ARGS__, NULL})
 
 #define ff_initFFlags(argc, argv, d, slash, f, cl) (ff_makeFFlags((argc), (argv), (d), (slash), (f), (ffu_ ## cl ## _child_list)))
 #define ff_getChild(ff) ff_childType(ff)
@@ -56,6 +61,10 @@ int ff_getopt(char **arg, ff_FFlags *ff);
 bool ff_getopt_wild(char **arg, ff_FFlags *ff);
 bool ff_getopt_wild_after(char **arg, ff_FFlags *ff);
 bool ff_getopt_wild_before(char **arg, ff_FFlags *ff);
-int ff_get_process_argv(char * **argv, ff_FFlags *ff);
+int ff_get_process_argv(char ***argv, ff_FFlags *ff);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif //FFLAGS_FFLAGS_H

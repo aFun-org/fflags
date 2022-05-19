@@ -33,7 +33,7 @@ struct ff_FFlags {
     struct ff_Argv *wild_arg_after;  // -- 后
 
     size_t argv_index;  // argv_index
-    bool allown_slash;
+    bool allow_slash;
     FILE *error_file;  // 错误信息, 字符串常量
 
     int argc_;
@@ -49,7 +49,7 @@ struct ff_Argv {
     struct ff_Argv *next;
 };
 
-ff_FFlags *ff_makeFFlags(int argc, char **argv, bool del_first, bool allown_slash, FILE *error_file, ff_Child *child[]) {
+ff_FFlags *ff_makeFFlags(int argc, char **argv, bool del_first, bool allow_slash, FILE *error_file, ff_Child *child[]) {
     ff_Child *get_child = NULL;
     ff_Argv *ff_argv = NULL;
     bool is_default;
@@ -72,7 +72,7 @@ ff_FFlags *ff_makeFFlags(int argc, char **argv, bool del_first, bool allown_slas
     }
 
     if (argc != 0 && !get_child->self_process) {
-        makeArgv(argc, argv, allown_slash, &ff_argv);
+        makeArgv(argc, argv, allow_slash, &ff_argv);
         if (ff_argv == NULL)
             return NULL;
     }
@@ -91,7 +91,7 @@ ff_FFlags *ff_makeFFlags(int argc, char **argv, bool del_first, bool allown_slas
         ff->next = ff->done->next;
 
     ff->argv_index = 1;
-    ff->allown_slash = allown_slash;
+    ff->allow_slash = allow_slash;
 
     if (error_file != NULL)
         ff->error_file = error_file;
@@ -156,7 +156,7 @@ static ff_Argv **makeArgv(int argc, char **argv, bool slash, ff_Argv **base) {
 
         if (is_wild)
             (*base)->wild = true;
-        else if (((*argv[i] != '-') && (slash || (*argv[i] != '/'))))  // 检查是否 arg
+        else if (((*argv[i] != '-') && (!slash || (*argv[i] != '/'))))  // 检查是否 arg (不以-开头 并且（没有启动slash模式 或者 不以/开头）)
             (*base)->is_arg = true;
 
         base = &((*base)->next);
@@ -282,7 +282,7 @@ int ff_getopt(char **arg, ff_FFlags *ff) {
                     argvToNext(ff);
                 return mark;
             }
-        } else if (ff->allown_slash && *(ff->done->data) == '/') {  // allow_slash时该分支才有效
+        } else if (ff->allow_slash && *(ff->done->data) == '/') {  // allow_slash时该分支才有效
             if (strlen(ff->done->data) > 2) {  // 长参数
                 int mark = getLongOpt(ff->done->data + 1, arg, ff);
                 argvToNext(ff);

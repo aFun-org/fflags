@@ -53,7 +53,7 @@ struct ff_DefineArg {
     int mark;  // 标识
 };
 
-ff_FFlags *ff_makeFFlags(int argc, char **argv, bool del_first, bool allown_slash, FILE *error_file, ff_Child *child[]);
+ff_FFlags *ff_makeFFlags(int argc, char **argv, bool del_first, bool allow_slash, FILE *error_file, ff_Child *child[]);
 const char *ff_childType(ff_FFlags *ff);
 void ff_freeFFlags(ff_FFlags *ff);
 

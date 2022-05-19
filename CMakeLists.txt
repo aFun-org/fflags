@@ -18,10 +18,10 @@ endif()
 
 if(MSVC)
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
-    message("Build with MSVC")
+    message(STATUS "Build with MSVC")
 else()
     add_compile_options(-fPIC)  # 启用fPIC参数
-    message("Not build with MSVC")
+    message(STATUS "Not build with MSVC")
 endif()
 
 include_directories(${CMAKE_SOURCE_DIR})
